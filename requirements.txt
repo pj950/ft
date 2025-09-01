@@ -1,0 +1,6 @@
+futu-api
+numpy
+pandas
+talib
+schedule
+requests
