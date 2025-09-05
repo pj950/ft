@@ -1,6 +1,11 @@
 futu-api
 numpy
 pandas
-talib
+TA-Lib
+PyWavelets
+scikit-learn
+scipy
 schedule
 requests
+python-dateutil
+matplotlib

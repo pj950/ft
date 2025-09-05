@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>趋势监控面板</title>
+  <script src="echarts.min.js"></script>
+</head>
+<body>
+  <h2>趋势监控面板</h2>
+  <div id="chart" style="width:100%;height:600px;"></div>
+  <script>
+    var chart = echarts.init(document.getElementById('chart'));
+
+    var option = {
+      title: { text: '行情走势 + 买卖信号' },
+      tooltip: {},
+      xAxis: { type: 'category', data: [] },
+      yAxis: { type: 'value' },
+      series: [
+        { name: '价格', type: 'line', data: [] },
+        { name: '信号', type: 'scatter', data: [], symbolSize: 20 }
+      ]
+    };
+    chart.setOption(option);
+
+    var ws = new WebSocket("ws://localhost:8000/ws");
+    ws.onmessage = function(event) {
+      var data = JSON.parse(event.data);
+      var prices = data.prices || [];
+      var signal = data.signal;
+
+      option.xAxis.data = prices.map((_, i) => i);
+      option.series[0].data = prices;
+      option.series[1].data = [];
+
+      if (signal === "买入") {
+        option.series[1].data.push({ value: [prices.length-1, prices[prices.length-1]], itemStyle:{color:'red'} });
+      } else if (signal === "卖出") {
+        option.series[1].data.push({ value: [prices.length-1, prices[prices.length-1]], itemStyle:{color:'green'} });
+      }
+      chart.setOption(option);
+    };
+  </script>
+</body>
+</html>

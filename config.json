@@ -1,11 +1,21 @@
 {
-  "market": "HK",
-  "mode": "WATCHLIST",
-  "watchlist": ["00700.HK", "09988.HK", "AAPL.US", "TSLA.US"],
-  "min_turnover": 20000000,
-  "kline_num": 200,
+  "futu": {
+    "host": "127.0.0.1",
+    "port": 11111
+  },
 
-  "indicators": {
+  "mode": "WATCHLIST",
+  "watchlist": ["HK.00700", "US.AAPL", "US.TSLA"],
+
+  "kline_num": 400,
+  "periods": ["1h", "2h", "4h", "1d"],
+
+  "filters": {
+    "min_turnover": 20000000,
+    "min_price": 1.0
+  },
+
+  "indicators": {   
     "ma": true,
     "macd": true,
     "rsi": true,
@@ -17,18 +27,61 @@
     "confirm_level": 2
   },
 
-  "signal": {
-    "cooldown_minutes": 30
+  "weights": {
+    "ma": 1,
+    "macd": 2,
+    "rsi": 1,
+    "boll": 1,
+    "fft": 2,
+    "derivative": 2,
+    "wavelet": 3,
+    "hybrid": 3,
+    "regression": 2,
+    "volume_spike_bonus_per_x": 5
   },
 
-  "wechat": {
+  "signal": {
+    "cooldown_minutes": 30,
+    "volume_spike_threshold": 2.5,
+    "priority_high_score": 70,
+    "priority_mid_score": 40
+  },
+
+  "notify": {
     "enabled": true,
-    "webhook_url": "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=xxxx"
+    "channel": "wecom",
+    "wecom": { 
+      "webhook": "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=PUT_YOUR_KEY_HERE" 
+    },
+    "serverchan": { "key": "" }
   },
 
   "schedule": {
     "enabled": true,
-    "daily_times": ["09:35", "13:35", "21:35"],
-    "hourly": true
+    "interval_minutes": 5,
+    "market_open_check": true
+  },
+
+  "risk": {
+    "max_drawdown": 0.1,
+    "max_position": 0.2,
+    "stop_loss": 0.05,
+    "take_profit": 0.15
+  },
+
+  "web": {
+    "enabled": true,
+    "host": "0.0.0.0",
+    "port": 8000,
+    "auth": {
+      "enabled": false,
+      "username": "",
+      "password": ""
+    }
+  },
+
+  "paths": {
+    "signal_csv": "data/signals.csv",
+    "log_file": "logs/monitor.log"
   }
 }

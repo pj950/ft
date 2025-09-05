@@ -1,22 +1,36 @@
-# monitor/notify.py
 import logging
 import requests
 
-def send_message(messages, config):
+def notify(messages, config):
     if not config["notify"].get("enabled", False):
-        logging.info("推送未启用")
+        logging.info("[通知] 已关闭")
         return
 
-    channel = config["notify"].get("channel", "wechat")
+    channel = config["notify"].get("channel", "log")
+    text = "\n".join(messages)
 
-    if channel == "wechat":
-        key = config["notify"]["wechat"].get("key")
+    if channel == "wecom":
+        webhook = config["notify"]["wecom"].get("webhook", "")
+        if not webhook:
+            logging.warning("[通知] 企业微信 webhook 未配置")
+            return
+        try:
+            r = requests.post(webhook, json={"msgtype":"text", "text":{"content": text}}, timeout=8)
+            logging.info(f"[通知-企业微信] {r.status_code}")
+        except Exception as e:
+            logging.error(f"[通知失败-企业微信] {e}")
+
+    elif channel == "serverchan":
+        key = config["notify"]["serverchan"].get("key", "")
         if not key:
-            logging.warning("微信key未配置")
+            logging.warning("[通知] Server酱 key 未配置")
             return
         url = f"https://sctapi.ftqq.com/{key}.send"
-        data = {"title": "趋势反转提醒", "desp": "\n\n".join(messages)}
         try:
-            requests.post(url, data=data, timeout=5)
+            r = requests.post(url, data={"title":"趋势提醒", "desp": text}, timeout=8)
+            logging.info(f"[通知-Server酱] {r.status_code}")
         except Exception as e:
-            logging.error(f"微信推送失败: {e}")
+            logging.error(f"[通知失败-Server酱] {e}")
+
+    else:
+        logging.info(f"[通知-日志]\n{text}")
