@@ -23,8 +23,18 @@
     "fft": true,
     "derivative": true,
     "wavelet": true,
-    "regression": true,
-    "confirm_level": 2
+    "regression": true
+  },
+
+  "weights": {
+    "ma": 1,
+    "macd": 2,
+    "rsi": 1,
+    "boll": 1,
+    "fft": 2,
+    "derivative": 2,
+    "wavelet": 3,
+    "regression": 2
   },
 
   "weights": {
